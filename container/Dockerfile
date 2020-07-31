@@ -134,8 +134,9 @@ RUN mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer ; 
 ARG MYSQL_MISP_PASSWORD=ChangeThisDefaultPassworda9564ebc3289b7a14551baf8ad5ec60a
 ARG MISP_GPG_PASSWORD=ChangeThisDefaultPasswordXuJBao5Q2bps89LWFqWkKgDZwAFpNHvc
 
-RUN sed -i -e 's/db login/misp/g' /var/www/MISP/app/Config/database.php ; \
-    sed -i -e "s/db password/${MYSQL_MISP_PASSWORD}/g" /var/www/MISP/app/Config/database.php ; \
+RUN sed -i -e 's/db login/${MYSQL_USER}/g' /var/www/MISP/app/Config/database.php ; \
+    sed -i -e "s/db password/${MYSQL_PASSWORD}/g" /var/www/MISP/app/Config/database.php ; \
+    sed -i -e "s/localhost/${MYSQL_HOST}/g" /var/www/MISP/app/Config/database.php ; \
     sed -i -E "s/'salt'(\s+)=>\s''/'salt' => '`openssl rand -base64 32 | tr \'/\' \'0\'`'/" /var/www/MISP/app/Config/config.php ; \
     sed -i -E "s/'baseurl'(\s+)=>\s''/'baseurl' => 'https:\/\/${MISP_FQDN}'/" /var/www/MISP/app/Config/config.php ; \
     sed -i -e "s/email@address.com/${MISP_EMAIL}/" /var/www/MISP/app/Config/config.php ; \
@@ -149,20 +150,20 @@ RUN sed -i -e 's/db login/misp/g' /var/www/MISP/app/Config/database.php ; \
     sudo phpenmod ssdeep ; \
     echo "#!/bin/bash" > /init-db ; \
     echo "if [ ! -f /var/lib/mysql/.db_initialized ]; then" >> /init-db ; \
-    echo "sudo chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
-    echo "sudo -u mysql -H /usr/bin/mysql_install_db --user=mysql" >> /init-db ; \
-    echo "chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
-    echo "cd '/usr' ; /usr/bin/mysqld_safe --datadir='/var/lib/mysql' &" >> /init-db ; \
-    echo "sleep 5" >> /init-db ; \
-    echo "mysql -uroot -e \"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')\"" >> /init-db ; \
-    echo "mysql -uroot -e \"DELETE FROM mysql.user WHERE User=''\"" >> /init-db ; \
-    echo "mysql -uroot -e \"DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'\"" >> /init-db ; \
-    echo "mysql -uroot -e \"FLUSH PRIVILEGES;\"" >> /init-db ; \
-    echo "mysql -uroot -e \"create database misp\"" >> /init-db ; \
-    echo "mysql -uroot -e \"grant usage on *.* to misp@localhost identified by '$MYSQL_MISP_PASSWORD'\"" >> /init-db ; \
-    echo "mysql -uroot -e \"grant all privileges on misp.* to misp@localhost\"" >> /init-db ; \
-    echo "mysql -uroot -e \"flush privileges;\"" >> /init-db ; \
-    echo "sudo -u www-data -H sh -c \"mysql -u misp -p$MYSQL_MISP_PASSWORD misp < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
+   # echo "sudo chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
+   # echo "sudo -u mysql -H /usr/bin/mysql_install_db --user=mysql" >> /init-db ; \
+   # echo "chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
+   # echo "cd '/usr' ; /usr/bin/mysqld_safe --datadir='/var/lib/mysql' &" >> /init-db ; \
+   # echo "sleep 5" >> /init-db ; \
+   # echo "mysql -uroot -e \"DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')\"" >> /init-db ; \
+   # echo "mysql -uroot -e \"DELETE FROM mysql.user WHERE User=''\"" >> /init-db ; \
+   # echo "mysql -uroot -e \"DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'\"" >> /init-db ; \
+   # echo "mysql -uroot -e \"FLUSH PRIVILEGES;\"" >> /init-db ; \
+    echo "mysql -h$MYSQL_HOST -uroot -p$ROOTPASS -e \"create database $MYSQL_DATABASE\"" >> /init-db ; \
+    echo "mysql -h$MYSQL_HOST -uroot -p$ROOTPASS -e \"grant usage on *.* to $MYSQL_USER@localhost identified by '$MYSQL_PASSWORD'\"" >> /init-db ; \
+    echo "mysql -h$MYSQL_HOST -uroot -p$ROOTPASS -e \"grant all privileges on misp.* to $MYSQL_USER@localhost\"" >> /init-db ; \
+    echo "mysql -h$MYSQL_HOST -uroot -p$ROOTPASS -e \"flush privileges;\"" >> /init-db ; \
+    echo "sudo -u www-data -H sh -c \"mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
     echo "touch /var/lib/mysql/.db_initialized" >> /init-db ; \
     echo "chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
     echo "fi" >> /init-db ; \
