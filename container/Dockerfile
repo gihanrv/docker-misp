@@ -30,7 +30,7 @@ ENV KMYSQL_PASSWORD ${MYSQL_PASSWORD}
 ENV KMYSQL_DATABASE ${MYSQL_DATABASE}
 ENV KMYSQL_HOST ${MYSQL_HOST}
 #ENV KMYSQL_HOST1 $MYSQL_HOST
-RUN echo "#!/bin/bash \n export KMYSQL_USER=${MYSQL_USER} && export KMYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} && export KMYSQL_PASSWORD=${MYSQL_PASSWORD} && export KMYSQL_DATABASE=${MYSQL_DATABASE} && KMYSQL_HOST=export${MYSQL_HOST}" > ./entrypoint.sh
+RUN echo "#!/bin/bash \n export KMYSQL_USER=${MYSQL_USER} && export KMYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} && export KMYSQL_PASSWORD=${MYSQL_PASSWORD} && export KMYSQL_DATABASE=${MYSQL_DATABASE} && KMYSQL_HOST=export${MYSQL_HOST} && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf" > ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 RUN apt-get update && apt-get install -y supervisor cron logrotate syslog-ng-core postfix curl gcc git gnupg-agent make python3 openssl redis-server sudo vim zip wget mariadb-client mariadb-server sqlite3 moreutils apache2 apache2-doc apache2-utils libapache2-mod-php php php-cli php-gnupg php-dev php-json php-mysql php7.2-opcache php-readline php-redis php-xml php-mbstring rng-tools python3-dev python3-pip python3-yara python3-redis python3-zmq libxml2-dev libxslt1-dev zlib1g-dev python3-setuptools libpq5 libjpeg-dev libfuzzy-dev ruby asciidoctor tesseract-ocr imagemagick libpoppler-cpp-dev virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev build-essential -y
 
@@ -213,7 +213,7 @@ RUN echo "/var/www/MISP/app/tmp/logs/resque-*-error.log {" > misp ; \
     echo "}" >> misp ; \
     chmod 0640 /etc/logrotate.d/misp
 
-RUN echo "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf" >>
+
 
 WORKDIR /var/www/MISP
 COPY supervisord.conf /etc/supervisor/conf.d/
