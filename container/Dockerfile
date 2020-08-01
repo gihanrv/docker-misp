@@ -1,11 +1,11 @@
 # User supplied inputs - (see bellow within Dockerfile for real ARGS that you can replace)
 # // DO NOT TOUCH HERE - THIS SECTION IS NOT USED - SIMPLY USED AS README //
 ##################################################################
-# ARG MYSQL_MISP_PASSWORD=ChangeThisDefaultPassworda9564ebc3289b7a14551baf8ad5ec60a	
-# ARG POSTFIX_RELAY_HOST=localhost	
-# ARG MISP_FQDN=localhost	
-# ARG MISP_EMAIL=admin@localhost	
-# ARG MISP_GPG_PASSWORD=ChangeThisDefaultPasswordXuJBao5Q2bps89LWFqWkKgDZwAFpNHvc
+ ARG KUMYSQL_USER	
+ ARG KUMYSQL_HOST	
+ ARG KUMYSQL_DATABASE	
+ ARG KUMYSQL_ROOT_PASSWORD
+ ARG KUMYSQL_PASSWORD
 ##################################################################
 # ^^^ DO NOT TOUCH HERE - THIS SECTION IS NOT USED - SIMPLY USED AS README ^^^
 FROM ubuntu:18.04
@@ -24,11 +24,11 @@ EXPOSE 80 443 3306 6379 6666 50000
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
-ENV MYSQL_USER user
-ENV MYSQL_ROOT_PASSWORD magic
-ENV MYSQL_PASSWORD develp
-ENV MYSQL_DATABASE misp
-ENV MYSQL_HOST 10.100.3.148
+ENV MYSQL_USER=$KUMYSQL_USER
+ENV MYSQL_ROOT_PASSWORD=$KUMYSQL_ROOT_PASSWORD
+ENV MYSQL_PASSWORD=$KUMYSQL_PASSWORD
+ENV MYSQL_DATABASE=$KUMYSQL_DATABASE
+ENV MYSQL_HOST=$KUMYSQL_HOST
 RUN apt-get update && apt-get install -y supervisor cron logrotate syslog-ng-core postfix curl gcc git gnupg-agent make python3 openssl redis-server sudo vim zip wget mariadb-client mariadb-server sqlite3 moreutils apache2 apache2-doc apache2-utils libapache2-mod-php php php-cli php-gnupg php-dev php-json php-mysql php7.2-opcache php-readline php-redis php-xml php-mbstring rng-tools python3-dev python3-pip python3-yara python3-redis python3-zmq libxml2-dev libxslt1-dev zlib1g-dev python3-setuptools libpq5 libjpeg-dev libfuzzy-dev ruby asciidoctor tesseract-ocr imagemagick libpoppler-cpp-dev virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev build-essential -y
 
 # Edit the php.ini file to adjust initial PHP settings to MISP recommended settings
