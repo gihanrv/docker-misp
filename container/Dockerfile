@@ -1,11 +1,11 @@
 # User supplied inputs - (see bellow within Dockerfile for real ARGS that you can replace)
 # // DO NOT TOUCH HERE - THIS SECTION IS NOT USED - SIMPLY USED AS README //
 ##################################################################
- ARG KUMYSQL_USER	
- ARG KUMYSQL_HOST	
- ARG KUMYSQL_DATABASE	
- ARG KUMYSQL_ROOT_PASSWORD
- ARG KUMYSQL_PASSWORD
+ #ARG KUMYSQL_USER	
+ #ARG KUMYSQL_HOST	
+# ARG KUMYSQL_DATABASE	
+ #ARG KUMYSQL_ROOT_PASSWORD
+#ARG KUMYSQL_PASSWORD
 ##################################################################
 # ^^^ DO NOT TOUCH HERE - THIS SECTION IS NOT USED - SIMPLY USED AS README ^^^
 FROM ubuntu:18.04
@@ -24,11 +24,11 @@ EXPOSE 80 443 3306 6379 6666 50000
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBIAN_PRIORITY critical
-ENV MYSQL_USER=$KUMYSQL_USER
-ENV MYSQL_ROOT_PASSWORD=$KUMYSQL_ROOT_PASSWORD
-ENV MYSQL_PASSWORD=$KUMYSQL_PASSWORD
-ENV MYSQL_DATABASE=$KUMYSQL_DATABASE
-ENV MYSQL_HOST=$KUMYSQL_HOST
+ENV KMYSQL_USER=$MYSQL_USER
+ENV KMYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+ENV KMYSQL_PASSWORD=$MYSQL_PASSWORD
+ENV KMYSQL_DATABASE=$MYSQL_DATABASE
+ENV KMYSQL_HOST=$MYSQL_HOST
 RUN apt-get update && apt-get install -y supervisor cron logrotate syslog-ng-core postfix curl gcc git gnupg-agent make python3 openssl redis-server sudo vim zip wget mariadb-client mariadb-server sqlite3 moreutils apache2 apache2-doc apache2-utils libapache2-mod-php php php-cli php-gnupg php-dev php-json php-mysql php7.2-opcache php-readline php-redis php-xml php-mbstring rng-tools python3-dev python3-pip python3-yara python3-redis python3-zmq libxml2-dev libxslt1-dev zlib1g-dev python3-setuptools libpq5 libjpeg-dev libfuzzy-dev ruby asciidoctor tesseract-ocr imagemagick libpoppler-cpp-dev virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev build-essential -y
 
 # Edit the php.ini file to adjust initial PHP settings to MISP recommended settings
@@ -139,9 +139,9 @@ RUN mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer ; 
 ARG MYSQL_MISP_PASSWORD=ChangeThisDefaultPassworda9564ebc3289b7a14551baf8ad5ec60a
 ARG MISP_GPG_PASSWORD=ChangeThisDefaultPasswordXuJBao5Q2bps89LWFqWkKgDZwAFpNHvc
 
-RUN sed -i -e "s/db login/$MYSQL_USER/g" /var/www/MISP/app/Config/database.php ; \
-    sed -i -e "s/db password/$MYSQL_PASSWORD/g" /var/www/MISP/app/Config/database.php ; \
-    sed -i -e "s/localhost/$MYSQL_HOST/g" /var/www/MISP/app/Config/database.php ; \
+RUN sed -i -e "s/db login/$KMYSQL_USER/g" /var/www/MISP/app/Config/database.php ; \
+    sed -i -e "s/db password/$KMYSQL_PASSWORD/g" /var/www/MISP/app/Config/database.php ; \
+    sed -i -e "s/localhost/$KMYSQL_HOST/g" /var/www/MISP/app/Config/database.php ; \
     sed -i -E "s/'salt'(\s+)=>\s''/'salt' => '`openssl rand -base64 32 | tr \'/\' \'0\'`'/" /var/www/MISP/app/Config/config.php ; \
     sed -i -E "s/'baseurl'(\s+)=>\s''/'baseurl' => 'https:\/\/${MISP_FQDN}'/" /var/www/MISP/app/Config/config.php ; \
     sed -i -e "s/email@address.com/${MISP_EMAIL}/" /var/www/MISP/app/Config/config.php ; \
@@ -164,11 +164,11 @@ RUN sed -i -e "s/db login/$MYSQL_USER/g" /var/www/MISP/app/Config/database.php ;
    # echo "mysql -uroot -e \"DELETE FROM mysql.user WHERE User=''\"" >> /init-db ; \
    # echo "mysql -uroot -e \"DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'\"" >> /init-db ; \
    # echo "mysql -uroot -e \"FLUSH PRIVILEGES;\"" >> /init-db ; \
-    echo "mysql -h$MYSQL_HOST -uroot -p$MYSQL_ROOT_PASSWORD -e \"create database $MYSQL_DATABASE\"" >> /init-db ; \
-    echo "mysql -h$MYSQL_HOST -uroot -p$MYSQL_ROOT_PASSWORD -e \"grant usage on *.* to $MYSQL_USER@localhost identified by '$MYSQL_PASSWORD'\"" >> /init-db ; \
-    echo "mysql -h$MYSQL_HOST -uroot -p$MYSQL_ROOT_PASSWORD -e \"grant all privileges on misp.* to $MYSQL_USER@localhost\"" >> /init-db ; \
-    echo "mysql -h$MYSQL_HOST -uroot -p$MYSQL_ROOT_PASSWORD -e \"flush privileges;\"" >> /init-db ; \
-    echo "sudo -u www-data -H sh -c \"mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
+    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"create database $KMYSQL_DATABASE\"" >> /init-db ; \
+    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant usage on *.* to $KMYSQL_USER@localhost identified by '$KMYSQL_PASSWORD'\"" >> /init-db ; \
+    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant all privileges on misp.* to $KMYSQL_USER@localhost\"" >> /init-db ; \
+    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"flush privileges;\"" >> /init-db ; \
+    echo "sudo -u www-data -H sh -c \"mysql -h$KMYSQL_HOST -u$KMYSQL_USER -p$KMYSQL_PASSWORD $KMYSQL_DATABASE < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
     echo "touch /var/lib/mysql/.db_initialized" >> /init-db ; \
     echo "chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
     echo "fi" >> /init-db ; \
