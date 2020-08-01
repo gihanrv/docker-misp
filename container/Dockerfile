@@ -213,6 +213,7 @@ RUN echo "/var/www/MISP/app/tmp/logs/resque-*-error.log {" > misp ; \
     echo "}" >> misp ; \
     chmod 0640 /etc/logrotate.d/misp
 
+RUN echo "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf" >>
 
 WORKDIR /var/www/MISP
 COPY supervisord.conf /etc/supervisor/conf.d/
@@ -220,5 +221,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/
 #>&2 echo "The default user = "admin@admin.test" | The default password = admin" ; \
 # To change it:
 #echo "/var/www/MISP/app/Console/cake Password 'admin@admin.test' '@dmin1!'" >> /root/init-db ; \
+
+
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+#CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
