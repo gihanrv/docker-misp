@@ -221,7 +221,6 @@ COPY supervisord.conf /etc/supervisor/conf.d/
 #>&2 echo "The default user = "admin@admin.test" | The default password = admin" ; \
 # To change it:
 #echo "/var/www/MISP/app/Console/cake Password 'admin@admin.test' '@dmin1!'" >> /root/init-db ; \
-
-
-ENTRYPOINT ["./entrypoint.sh"]
+RUN echo "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf" >> /entrypoint.sh
+ENTRYPOINT ["sh", "./entrypoint.sh"]
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
