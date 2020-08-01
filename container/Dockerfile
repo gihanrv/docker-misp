@@ -167,7 +167,7 @@ RUN sed -i -e "s/db login/$KMYSQL_USER/g" /var/www/MISP/app/Config/database.php 
    # echo "mysql -uroot -e \"FLUSH PRIVILEGES;\"" >> /init-db ; \
     echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"create database $KMYSQL_DATABASE\"" >> /init-db ; \
     echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant usage on *.* to $KMYSQL_USER@localhost identified by '$KMYSQL_PASSWORD'\"" >> /init-db ; \
-    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant all privileges on misp.* to $KMYSQL_USER@localhost\"" >> /init-db ; \
+    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant all privileges on $KMYSQL_DATABASE.* to $KMYSQL_USER@localhost\"" >> /init-db ; \
     echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"flush privileges;\"" >> /init-db ; \
     echo "sudo -u www-data -H sh -c \"mysql -h$KMYSQL_HOST -u$KMYSQL_USER -p$KMYSQL_PASSWORD $KMYSQL_DATABASE < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
     echo "touch /var/lib/mysql/.db_initialized" >> /init-db ; \
