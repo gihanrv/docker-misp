@@ -56,8 +56,8 @@ RUN chown -R www-data:www-data /var/www/MISP /root/.config /root/.git; \
     sudo -u www-data -H git submodule update --init --recursive ; \
     sudo -u www-data -H git submodule foreach --recursive git config core.filemode false ; \
     sudo -u www-data -H git config core.filemode false ; \
-    echo
 
+   
 RUN sudo pip3 install --upgrade pip ; \
     sudo pip3 install git+https://github.com/CybOXProject/mixbox.git ; \
     sudo pip3 install git+https://github.com/CybOXProject/python-cybox.git ; \
