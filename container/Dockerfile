@@ -9,7 +9,7 @@ MAINTAINER Ventz Petkov <ventz_petkov@harvard.edu>
 
 # Dir you need to override to keep data on reboot/new container:
 #VOLUME /var/lib/mysql
-VOLUME /var/www/MISP/app/files
+#VOLUME /var/www/MISP/app/files
 
 # Dir you might want to override in order to have custom ssl certs
 # Need: "misp.key" and "misp.crt"
