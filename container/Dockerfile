@@ -214,8 +214,8 @@ RUN echo "/var/www/MISP/app/tmp/logs/resque-*-error.log {" > misp ; \
 WORKDIR /var/www/MISP
 COPY supervisord.conf /etc/supervisor/conf.d/
 COPY script.sh /
-RUN chmod 777 /script.sh /entrypoint.sh
-
+RUN chmod 777 /script.sh
+RUN chmod 777 /entrypoint.sh
 #>&2 echo "The default user = "admin@admin.test" | The default password = admin" ; \
 # To change it:
 #echo "/var/www/MISP/app/Console/cake Password 'admin@admin.test' '@dmin1!'" >> /root/init-db ; \
