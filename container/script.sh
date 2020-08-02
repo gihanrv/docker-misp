@@ -10,7 +10,7 @@
     if [ ! -f /var/lib/mysql/.db_initialized ]; then
 
             mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e "create database $KMYSQL_DATABASE"
-            mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e "CREATE USER $KMYSQL_USER@@'%' IDENTIFIED BY '$KMYSQL_PASSWORD'"
+            mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e "CREATE USER $KMYSQL_USER@'%' IDENTIFIED BY '$KMYSQL_PASSWORD'"
             mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e "grant usage on *.* to $KMYSQL_USER@'%' identified by '$KMYSQL_DATABASE'"
             mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e "grant all privileges on $KMYSQL_DATABASE.* to $KMYSQL_USER@'%'"
             mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e "flush privileges;"
