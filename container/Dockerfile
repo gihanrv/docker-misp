@@ -1,11 +1,7 @@
 # User supplied inputs - (see bellow within Dockerfile for real ARGS that you can replace)
 # // DO NOT TOUCH HERE - THIS SECTION IS NOT USED - SIMPLY USED AS README //
 ##################################################################
- #ARG KUMYSQL_USER	
- #ARG KUMYSQL_HOST	
-# ARG KUMYSQL_DATABASE	
- #ARG KUMYSQL_ROOT_PASSWORD
-#ARG KUMYSQL_PASSWORD
+
 ##################################################################
 # ^^^ DO NOT TOUCH HERE - THIS SECTION IS NOT USED - SIMPLY USED AS README ^^^
 FROM ubuntu:18.04
@@ -217,10 +213,14 @@ RUN echo "/var/www/MISP/app/tmp/logs/resque-*-error.log {" > misp ; \
 
 WORKDIR /var/www/MISP
 COPY supervisord.conf /etc/supervisor/conf.d/
+COPY script.sh /
+RUN 777 /script.sh 
 
 #>&2 echo "The default user = "admin@admin.test" | The default password = admin" ; \
 # To change it:
 #echo "/var/www/MISP/app/Console/cake Password 'admin@admin.test' '@dmin1!'" >> /root/init-db ; \
 RUN echo "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf" >> /entrypoint.sh
+RUN echo "sh /script.sh" >> /entrypoint.sh
+
 ENTRYPOINT ["sh", "./entrypoint.sh"]
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
