@@ -138,22 +138,22 @@ RUN mkdir /var/www/.composer && chown -R www-data:www-data /var/www/.composer ; 
 ARG MYSQL_MISP_PASSWORD=ChangeThisDefaultPassworda9564ebc3289b7a14551baf8ad5ec60a
 ARG MISP_GPG_PASSWORD=ChangeThisDefaultPasswordXuJBao5Q2bps89LWFqWkKgDZwAFpNHvc
 
-RUN sed -i -e "s/db login/$KMYSQL_USER/g" /var/www/MISP/app/Config/database.php ; \
-    sed -i -e "s/db password/$KMYSQL_PASSWORD/g" /var/www/MISP/app/Config/database.php ; \
-    sed -i -e "s/localhost/$KMYSQL_HOST/g" /var/www/MISP/app/Config/database.php ; \
-    sed -i -E "s/'salt'(\s+)=>\s''/'salt' => '`openssl rand -base64 32 | tr \'/\' \'0\'`'/" /var/www/MISP/app/Config/config.php ; \
-    sed -i -E "s/'baseurl'(\s+)=>\s''/'baseurl' => 'https:\/\/${MISP_FQDN}'/" /var/www/MISP/app/Config/config.php ; \
-    sed -i -e "s/email@address.com/${MISP_EMAIL}/" /var/www/MISP/app/Config/config.php ; \
-    sed -i -e "s/bind 127.0.0.1 ::1/bind 0.0.0.0/" /etc/redis/redis.conf ; \
-    sudo chown -R www-data:www-data /var/www/MISP/app/Config ; \
+    #sed -i -e "s/db login/$KMYSQL_USER/g" /var/www/MISP/app/Config/database.php ; \
+    #sed -i -e "s/db password/$KMYSQL_PASSWORD/g" /var/www/MISP/app/Config/database.php ; \
+    #sed -i -e "s/localhost/$KMYSQL_HOST/g" /var/www/MISP/app/Config/database.php ; \
+    #sed -i -E "s/'salt'(\s+)=>\s''/'salt' => '`openssl rand -base64 32 | tr \'/\' \'0\'`'/" /var/www/MISP/app/Config/config.php ; \
+    #sed -i -E "s/'baseurl'(\s+)=>\s''/'baseurl' => 'https:\/\/${MISP_FQDN}'/" /var/www/MISP/app/Config/config.php ; \
+    #sed -i -e "s/email@address.com/${MISP_EMAIL}/" /var/www/MISP/app/Config/config.php ; \
+    #sed -i -e "s/bind 127.0.0.1 ::1/bind 0.0.0.0/" /etc/redis/redis.conf ; \
+RUN sudo chown -R www-data:www-data /var/www/MISP/app/Config ; \
     sudo chmod -R 750 /var/www/MISP/app/Config ; \
     sudo -u www-data -H wget https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/ssdeep-2.14.1.tar.gz ; \
     tar zxvf ssdeep-2.14.1.tar.gz && cd ssdeep-2.14.1 && ./configure && make && sudo make install ; \
     sudo pecl install ssdeep ; \
     sudo echo "extension=ssdeep.so" > /etc/php/7.2/mods-available/ssdeep.ini ; \
     sudo phpenmod ssdeep ; \
-    echo "#!/bin/bash" > /init-db ; \
-    echo "if [ ! -f /var/lib/mysql/.db_initialized ]; then" >> /init-db ; \
+    #echo "#!/bin/bash" > /init-db ; \
+    #echo "if [ ! -f /var/lib/mysql/.db_initialized ]; then" >> /init-db ; \
    # echo "sudo chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
    # echo "sudo -u mysql -H /usr/bin/mysql_install_db --user=mysql" >> /init-db ; \
    # echo "chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
@@ -163,11 +163,11 @@ RUN sed -i -e "s/db login/$KMYSQL_USER/g" /var/www/MISP/app/Config/database.php 
    # echo "mysql -uroot -e \"DELETE FROM mysql.user WHERE User=''\"" >> /init-db ; \
    # echo "mysql -uroot -e \"DELETE FROM mysql.db WHERE Db='test' OR Db='test\_%'\"" >> /init-db ; \
    # echo "mysql -uroot -e \"FLUSH PRIVILEGES;\"" >> /init-db ; \
-    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"create database $KMYSQL_DATABASE\"" >> /init-db ; \
-    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant usage on *.* to $KMYSQL_USER@localhost identified by '$KMYSQL_PASSWORD'\"" >> /init-db ; \
-    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant all privileges on $KMYSQL_DATABASE.* to $KMYSQL_USER@localhost\"" >> /init-db ; \
-    echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"flush privileges;\"" >> /init-db ; \
-    echo "sudo -u www-data -H sh -c \"mysql -h$KMYSQL_HOST -u$KMYSQL_USER -p$KMYSQL_PASSWORD $KMYSQL_DATABASE < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
+   # echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"create database $KMYSQL_DATABASE\"" >> /init-db ; \
+   # echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant usage on *.* to $KMYSQL_USER@localhost identified by '$KMYSQL_PASSWORD'\"" >> /init-db ; \
+   # echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"grant all privileges on $KMYSQL_DATABASE.* to $KMYSQL_USER@localhost\"" >> /init-db ; \
+   #echo "mysql -h$KMYSQL_HOST -uroot -p$KMYSQL_ROOT_PASSWORD -e \"flush privileges;\"" >> /init-db ; \
+   # echo "sudo -u www-data -H sh -c \"mysql -h$KMYSQL_HOST -u$KMYSQL_USER -p$KMYSQL_PASSWORD $KMYSQL_DATABASE < /var/www/MISP/INSTALL/MYSQL.sql\"" >> /init-db ; \
     echo "touch /var/lib/mysql/.db_initialized" >> /init-db ; \
     echo "chown -R mysql:mysql /var/lib/mysql" >> /init-db ; \
     echo "fi" >> /init-db ; \
