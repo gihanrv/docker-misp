@@ -222,5 +222,5 @@ RUN chmod 777 /entrypoint.sh
 RUN echo "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf" >> /entrypoint.sh
 RUN echo "sh /script.sh" >> /entrypoint.sh
 
-ENTRYPOINT ["sh", "./entrypoint.sh"]
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
